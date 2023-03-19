@@ -14,6 +14,8 @@ public class Joystick : MonoBehaviour
 
     protected Vector3 defaultFingerPosition; // the default position of the thumb image
 
+    private int currentTouch = -1;
+
     protected float currentHeadings = 0;
 
     protected Vector3 currentDirection;
@@ -44,7 +46,7 @@ public class Joystick : MonoBehaviour
 
 #if UNITY_EDITOR
         // check for mouse input
-        MouseInput();
+        //MouseInput();
     #endif
         if (!isTouching)
         {
@@ -87,7 +89,7 @@ public class Joystick : MonoBehaviour
                 isInitiated = true;
             }
 
-            HandleMovementInput(mousePos, localMousePos);
+            JoystickMovement(mousePos, localMousePos);
 
             currentHeadings = GetHeadings(mousePos);
         }
@@ -101,6 +103,11 @@ public class Joystick : MonoBehaviour
 
     private void ResetJoystick()
     {
+        if(currentTouch != -1)
+        {
+            currentTouch = -1;
+        }
+
         isTouching = false;
         isInitiated = false;
 
@@ -114,21 +121,36 @@ public class Joystick : MonoBehaviour
     private void TouchInput()
     {
         Vector3 touchPos = Vector3.zero;
+        Vector3 localTouchPos = Vector3.zero;
 
         if (Input.touchCount > 0)
         {
-            Touch touch = Input.GetTouch(0);
-            touchPos = touch.position;
-
-            // convert the touch position to local coordinates of the joystick background image
-            Vector3 localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
-
-            if (touch.phase == TouchPhase.Began && localTouchPos.magnitude <= maxDistance)
+            if (currentTouch == -1)
             {
-                isInitiated = true;
-            }
+                for (int i = 0; i < Input.touchCount; i++)
+                {
+                    Touch touch = Input.GetTouch(i);
+                    touchPos = touch.position;
+                    localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
 
-            HandleMovementInput(touchPos, localTouchPos);
+                    if (touch.phase == TouchPhase.Began && localTouchPos.magnitude <= maxDistance)
+                    {
+                        isInitiated = true;
+                        currentTouch = i;
+                        break;
+                    }
+                }
+            }
+            else
+            {
+                Touch touch = Input.GetTouch(currentTouch);
+                localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
+
+                touchPos = touch.position;
+            }
+            
+
+            JoystickMovement(touchPos, localTouchPos);
 
             currentHeadings = GetHeadings(touchPos);
         }
@@ -140,7 +162,7 @@ public class Joystick : MonoBehaviour
         currentDirection = GetDirection(touchPos);
     }
 
-    protected virtual void HandleMovementInput(Vector3 pos, Vector3 localPos)
+    protected virtual void JoystickMovement(Vector3 pos, Vector3 localPos)
     {
         if (!isInitiated)
         {
