@@ -2,10 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class PlayerMovement : MonoBehaviour
+public class UnitMovement : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private MovementJoystickController joystick;
+    [SerializeField] private MovementJoystick joystick;
 
     [Header("Properties")]
     [SerializeField] private float speed = 5f;

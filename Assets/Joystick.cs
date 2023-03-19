@@ -1,61 +1,76 @@
-using System;
+﻿using System;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class MovementJoystickController : MonoBehaviour
+public class Joystick : MonoBehaviour
 {
     [Header("Dependencies")]
-    [SerializeField] private Image innerStick;
-    [SerializeField] private Image outerStick;
-    [SerializeField] private Transform headingsPivot;
+    [SerializeField] protected Image stickImage;
+    [SerializeField] protected RectTransform stickRoot;
 
     [Header("Properties")]
-    [SerializeField] private float maxDistance = 50f; // the maximum distance the thumb can move from the center
+    [SerializeField] protected float maxDistance = 50f; // the maximum distance the thumb can move from the center
+    [SerializeField] protected float tapDuration = 0.1f;
 
-    private Vector3 defaultThumbPosition; // the default position of the thumb image
+    protected Vector3 defaultFingerPosition; // the default position of the thumb image
 
-    private Vector3 currentDirection;
-    private float currentHeadings = 0;
+    protected float currentHeadings = 0;
+
+    protected Vector3 currentDirection;
+
+    protected float currentTapTime = 0f;
+
+    protected bool isInitiated;
+    protected bool isTouching; // whether the joystick thumb is currently being touched
+    protected Vector2 touchPosition;
     public Vector3 Direction { get => currentDirection; }
 
-    private bool isInitiated;
-    private bool isTouching; // whether the joystick thumb is currently being touched
-    private Vector2 touchPosition;
+    protected bool isMoving => !isTouching && !isInitiated;
 
     void Start()
     {
         // calculate the maximum distance the thumb can move from the center
-        maxDistance = outerStick.rectTransform.sizeDelta.x / 2f - innerStick.rectTransform.sizeDelta.x / 2f;
+        maxDistance = stickRoot.sizeDelta.x / 2f - stickImage.rectTransform.sizeDelta.x / 2f;
         // save the default position of the thumb image
-        defaultThumbPosition = innerStick.rectTransform.position;
+        defaultFingerPosition = stickImage.rectTransform.position;
     }
 
-    void Update()
+    protected virtual void Update()
     {
 #if PLATFORM_ANDROID && !UNITY_EDITOR
         // check for touch input
         TouchInput();
 #endif
-        // check for mouse input
+
 #if UNITY_EDITOR
+        // check for mouse input
         MouseInput();
-#endif
-
-        UpdateHeadings();
-
+    #endif
         if (!isTouching)
         {
             // reset the position of the thumb image to the center of the joystick background image
-            innerStick.rectTransform.position = defaultThumbPosition;
+            stickImage.rectTransform.position = defaultFingerPosition;
         }
     }
-
-    private void UpdateHeadings()
+    private Vector3 GetDirection(Vector2 pos)
     {
-        if (!isInitiated) return;
+        if (!isTouching)
+        {
+            return Vector3.zero;
+        }
 
-        Vector3 curDir = headingsPivot.rotation.eulerAngles;
-        headingsPivot.rotation = Quaternion.Euler(new Vector3(curDir.x, curDir.y, currentHeadings));
+        float angle = GetHeadings(pos);
+        Vector3 direction = new Vector3(0, -angle, 0);
+
+        return direction;
+    }
+
+    private float GetHeadings(Vector2 pos)
+    {
+        Vector2 direction = pos - (Vector2)defaultFingerPosition;
+
+        float rot = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
+        return rot;
     }
 
     private void MouseInput()
@@ -65,7 +80,7 @@ public class MovementJoystickController : MonoBehaviour
         if (Input.GetMouseButton(0))
         {
             mousePos = Input.mousePosition;
-            Vector3 localMousePos = outerStick.transform.InverseTransformPoint(mousePos);
+            Vector3 localMousePos = stickRoot.transform.InverseTransformPoint(mousePos);
 
             if (localMousePos.magnitude <= maxDistance)
             {
@@ -78,11 +93,22 @@ public class MovementJoystickController : MonoBehaviour
         }
         else
         {
-            isTouching = false;
-            isInitiated = false;
+            ResetJoystick();
         }
 
         currentDirection = GetDirection(mousePos);
+    }
+
+    private void ResetJoystick()
+    {
+        isTouching = false;
+        isInitiated = false;
+
+        if (currentTapTime > 0)
+        {
+            if (currentTapTime <= tapDuration) Tap();
+            currentTapTime = 0;
+        }
     }
 
     private void TouchInput()
@@ -95,7 +121,7 @@ public class MovementJoystickController : MonoBehaviour
             touchPos = touch.position;
 
             // convert the touch position to local coordinates of the joystick background image
-            Vector3 localTouchPos = outerStick.transform.InverseTransformPoint(touchPos);
+            Vector3 localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
 
             if (touch.phase == TouchPhase.Began && localTouchPos.magnitude <= maxDistance)
             {
@@ -108,14 +134,13 @@ public class MovementJoystickController : MonoBehaviour
         }
         else
         {
-            isTouching = false;
-            isInitiated = false;
+            ResetJoystick();
         }
 
         currentDirection = GetDirection(touchPos);
     }
 
-    private void HandleMovementInput(Vector3 pos, Vector3 localPos)
+    protected virtual void HandleMovementInput(Vector3 pos, Vector3 localPos)
     {
         if (!isInitiated)
         {
@@ -126,8 +151,14 @@ public class MovementJoystickController : MonoBehaviour
         if (localPos.magnitude <= maxDistance)
         {
             // move the thumb image to the touch position
-            innerStick.rectTransform.position = pos;
+            stickImage.rectTransform.position = pos;
+
+            currentTapTime += Time.deltaTime;
+
+            Hold();
+
             isTouching = true;
+
             touchPosition = pos;
         }
         else
@@ -135,30 +166,19 @@ public class MovementJoystickController : MonoBehaviour
             // calculate the position of the thumb image at the edge of the joystick background image
             Vector3 clampedPos = localPos.normalized * maxDistance;
             // convert the clamped position back to world coordinates
-            clampedPos = outerStick.transform.TransformPoint(clampedPos);
+            clampedPos = stickRoot.transform.TransformPoint(clampedPos);
             // move the thumb image to the clamped position
-            innerStick.rectTransform.position = clampedPos;
+            stickImage.rectTransform.position = clampedPos;
         }
     }
 
-    private float GetHeadings(Vector2 pos)
+    protected virtual void Tap()
     {
-        Vector2 direction = pos - (Vector2)defaultThumbPosition;
 
-        float rot = Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg - 90f;
-        return rot;
     }
 
-    private Vector3 GetDirection(Vector2 pos)
+    protected virtual void Hold()
     {
-        if (!isTouching)
-        {
-            return Vector3.zero;
-        }
 
-        float angle = GetHeadings(pos);
-        Vector3 direction = new Vector3(0, -angle, 0);
-
-        return direction;
     }
 }
