@@ -993,7 +993,7 @@ MonoBehaviour:
   stickImage: {fileID: 435502221}
   stickRoot: {fileID: 669531791}
   maxDistance: 50
-  tapDuration: 0.2
+  tapDuration: 0.1
 --- !u!1 &698974313
 GameObject:
   m_ObjectHideFlags: 0
@@ -1729,6 +1729,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9711a7456a63b9a46ade0d30096ba774, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  FingerIDs: 
 --- !u!4 &1422287181
 Transform:
   m_ObjectHideFlags: 0

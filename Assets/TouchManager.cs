@@ -4,6 +4,5 @@ using UnityEngine;
 
 public class TouchManager : SingletonBehaviour<TouchManager>
 {
-    private int currentTouchCount = 1;
-    public int CurrentTouchCount { get => currentTouchCount; set => currentTouchCount = value; }
+    public List<int> FingerIDs = new List<int>();
 }

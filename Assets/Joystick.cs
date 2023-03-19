@@ -14,7 +14,7 @@ public class Joystick : MonoBehaviour
 
     protected Vector3 defaultFingerPosition; // the default position of the thumb image
 
-    private int currentTouch = -1;
+    private int cachedTouchIndex = -1;
 
     protected float currentHeadings = 0;
 
@@ -39,15 +39,8 @@ public class Joystick : MonoBehaviour
 
     protected virtual void Update()
     {
-#if PLATFORM_ANDROID && !UNITY_EDITOR
-        // check for touch input
         TouchInput();
-#endif
 
-#if UNITY_EDITOR
-        // check for mouse input
-        //MouseInput();
-    #endif
         if (!isTouching)
         {
             // reset the position of the thumb image to the center of the joystick background image
@@ -103,10 +96,8 @@ public class Joystick : MonoBehaviour
 
     private void ResetJoystick()
     {
-        if(currentTouch != -1)
-        {
-            currentTouch = -1;
-        }
+        TouchManager.Instance.FingerIDs.Remove(cachedTouchIndex);
+        cachedTouchIndex = -1;
 
         isTouching = false;
         isInitiated = false;
@@ -120,46 +111,41 @@ public class Joystick : MonoBehaviour
 
     private void TouchInput()
     {
-        Vector3 touchPos = Vector3.zero;
-        Vector3 localTouchPos = Vector3.zero;
-
-        if (Input.touchCount > 0)
+        if (cachedTouchIndex == -1)
         {
-            if (currentTouch == -1)
+            for (int i = 0; i < Input.touchCount; i++)
             {
-                for (int i = 0; i < Input.touchCount; i++)
-                {
-                    Touch touch = Input.GetTouch(i);
-                    touchPos = touch.position;
-                    localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
+                Touch touch = Input.GetTouch(i);
+                Vector3 touchPos = touch.position;
+                Vector3 localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
 
-                    if (touch.phase == TouchPhase.Began && localTouchPos.magnitude <= maxDistance)
-                    {
-                        isInitiated = true;
-                        currentTouch = i;
-                        break;
-                    }
+                if (touch.phase == TouchPhase.Began && localTouchPos.magnitude <= maxDistance)
+                {
+                    if (TouchManager.Instance.FingerIDs.Contains(i)) continue;
+                    isInitiated = true;
+                    cachedTouchIndex = touch.fingerId;
+                    TouchManager.Instance.FingerIDs.Add(touch.fingerId);
+                    break;
                 }
             }
-            else
-            {
-                Touch touch = Input.GetTouch(currentTouch);
-                localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
-
-                touchPos = touch.position;
-            }
-            
-
-            JoystickMovement(touchPos, localTouchPos);
-
-            currentHeadings = GetHeadings(touchPos);
         }
         else
         {
-            ResetJoystick();
-        }
+            Touch touch = Input.GetTouch(cachedTouchIndex);
 
-        currentDirection = GetDirection(touchPos);
+            Vector3 touchPos = touch.position;
+            Vector3 localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
+
+            if (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended)
+            {
+                ResetJoystick();
+            }
+
+            JoystickMovement(touchPos, localTouchPos);
+            currentHeadings = GetHeadings(touchPos);
+
+            currentDirection = GetDirection(touchPos);
+        }
     }
 
     protected virtual void JoystickMovement(Vector3 pos, Vector3 localPos)
