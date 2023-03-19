@@ -9,10 +9,11 @@ public class Joystick : MonoBehaviour
     [SerializeField] protected RectTransform stickRoot;
 
     [Header("Properties")]
-    [SerializeField] protected float maxDistance = 50f; // the maximum distance the thumb can move from the center
+    [SerializeField] protected float maxDistance = 50f;
     [SerializeField] protected float tapDuration = 0.1f;
+    [SerializeField] protected float holdDuration = 0.2f;
 
-    protected Vector3 defaultFingerPosition; // the default position of the thumb image
+    protected Vector3 defaultFingerPosition;
 
     private int cachedTouchIndex = -1;
 
@@ -23,17 +24,20 @@ public class Joystick : MonoBehaviour
     protected float currentTapTime = 0f;
 
     protected bool isInitiated;
-    protected bool isTouching; // whether the joystick thumb is currently being touched
+    protected bool isTouching;
+    protected bool isHolding = false;
+
     protected Vector2 touchPosition;
     public Vector3 Direction { get => currentDirection; }
+
+    protected float stickDistance;
+    public float StickDistance { get => stickDistance; }
 
     protected bool isMoving => !isTouching && !isInitiated;
 
     void Start()
     {
-        // calculate the maximum distance the thumb can move from the center
         maxDistance = stickRoot.sizeDelta.x / 2f - stickImage.rectTransform.sizeDelta.x / 2f;
-        // save the default position of the thumb image
         defaultFingerPosition = stickImage.rectTransform.position;
     }
 
@@ -43,7 +47,6 @@ public class Joystick : MonoBehaviour
 
         if (!isTouching)
         {
-            // reset the position of the thumb image to the center of the joystick background image
             stickImage.rectTransform.position = defaultFingerPosition;
         }
     }
@@ -68,32 +71,6 @@ public class Joystick : MonoBehaviour
         return rot;
     }
 
-    private void MouseInput()
-    {
-        Vector3 mousePos = Vector3.zero;
-
-        if (Input.GetMouseButton(0))
-        {
-            mousePos = Input.mousePosition;
-            Vector3 localMousePos = stickRoot.transform.InverseTransformPoint(mousePos);
-
-            if (localMousePos.magnitude <= maxDistance)
-            {
-                isInitiated = true;
-            }
-
-            JoystickMovement(mousePos, localMousePos);
-
-            currentHeadings = GetHeadings(mousePos);
-        }
-        else
-        {
-            ResetJoystick();
-        }
-
-        currentDirection = GetDirection(mousePos);
-    }
-
     private void ResetJoystick()
     {
         TouchManager.Instance.FingerIDs.Remove(cachedTouchIndex);
@@ -106,6 +83,11 @@ public class Joystick : MonoBehaviour
         {
             if (currentTapTime <= tapDuration) Tap();
             currentTapTime = 0;
+        }
+
+        if (isHolding)
+        {
+            EndHold();
         }
     }
 
@@ -131,6 +113,12 @@ public class Joystick : MonoBehaviour
         }
         else
         {
+            if (cachedTouchIndex >= Input.touchCount)
+            {
+                ResetJoystick();
+                return;
+            }
+
             Touch touch = Input.GetTouch(cachedTouchIndex);
 
             Vector3 touchPos = touch.position;
@@ -155,15 +143,13 @@ public class Joystick : MonoBehaviour
             return;
         }
 
-        // check if the touch is within the bounds of the joystick background image
-        if (localPos.magnitude <= maxDistance)
+        stickDistance = localPos.magnitude;
+
+        if (stickDistance <= maxDistance)
         {
-            // move the thumb image to the touch position
             stickImage.rectTransform.position = pos;
 
             currentTapTime += Time.deltaTime;
-
-            Hold();
 
             isTouching = true;
 
@@ -171,12 +157,14 @@ public class Joystick : MonoBehaviour
         }
         else
         {
-            // calculate the position of the thumb image at the edge of the joystick background image
             Vector3 clampedPos = localPos.normalized * maxDistance;
-            // convert the clamped position back to world coordinates
             clampedPos = stickRoot.transform.TransformPoint(clampedPos);
-            // move the thumb image to the clamped position
             stickImage.rectTransform.position = clampedPos;
+        }
+
+        if (currentTapTime > holdDuration)
+        {
+            Hold();
         }
     }
 
@@ -187,6 +175,11 @@ public class Joystick : MonoBehaviour
 
     protected virtual void Hold()
     {
+        isHolding = true;
+    }
 
+    protected virtual void EndHold()
+    {
+        isHolding = false;
     }
 }

@@ -11,6 +11,9 @@ public class UnitMovement : MonoBehaviour
     [SerializeField] private float speed = 5f;
 
     private Vector3 lastDirection = Vector3.zero;
+    Vector3 movement = Vector3.zero;
+
+    public Vector3 Movement { get => movement; }
 
     private void Update()
     {
@@ -22,7 +25,8 @@ public class UnitMovement : MonoBehaviour
 
         if (joystickDirection.magnitude > 0f)
         {
-            transform.position += transform.forward * speed * Time.deltaTime;
+            movement = transform.forward * speed * Time.deltaTime;
+            transform.position += movement;
 
             if (lastDirection != joystick.Direction)
             {
@@ -31,6 +35,7 @@ public class UnitMovement : MonoBehaviour
         }
         else
         {
+            movement = Vector3.zero;
             transform.rotation = Quaternion.Euler(lastDirection);
         }
     }

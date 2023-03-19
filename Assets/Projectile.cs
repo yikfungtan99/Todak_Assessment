@@ -9,11 +9,31 @@ public class Projectile : MonoBehaviour
     [SerializeField] private LayerMask affectedLayerMask;
 
     private Unit owner = null;
+    public bool CanDestroyOtherUnits = true;
+
+    private float decayTime = 10f;
+
+    public float DecayTime { get => decayTime; set => decayTime = value; }
+
+    private void Start()
+    {
+        Destroy(gameObject, decayTime);
+    }
 
     private void Update()
     {
-        transform.position += transform.forward * projectileSpeed * Time.deltaTime;
+        MoveProjectile();
+        DestroyOtherUnits();
+    }
 
+    private void MoveProjectile()
+    {
+        transform.position += transform.forward * projectileSpeed * Time.deltaTime;
+    }
+
+    private void DestroyOtherUnits()
+    {
+        if (!CanDestroyOtherUnits) return;
         Collider[] colliders = Physics.OverlapSphere(transform.position, effectRadius, affectedLayerMask);
 
         if (colliders.Length > 0)

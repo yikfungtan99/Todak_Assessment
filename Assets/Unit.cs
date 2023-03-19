@@ -2,7 +2,9 @@
 
 public class Unit : MonoBehaviour
 {
-    [SerializeField] private UnitAttack unitAttack;
+    [SerializeField] private UnitMovement unitMovement;
+    [SerializeField] private UnitAbilityController unitAttack;
 
-    public UnitAttack UnitAttack { get => unitAttack; }
+    public UnitAbilityController UnitAttack { get => unitAttack; }
+    public UnitMovement UnitMovement { get => unitMovement; }
 }
