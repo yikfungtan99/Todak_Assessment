@@ -1,13 +1,12 @@
 ﻿using System;
 using UnityEngine;
 
+[System.Serializable]
 public class TeleportAbility : Ability
 {
-    private bool canTeleport = false;
-
-    private float projectileDecayTime = 3f;
-
-    private float currentTime = 0f;
+    public Projectile TeleportAbilityPrefab;
+    public float ProjectileDecayTime = 3f;
+    public float CurrentTime = 0f;
 
     Projectile projInstance = null;
 
@@ -15,22 +14,18 @@ public class TeleportAbility : Ability
     {
     }
 
+    public TeleportAbility(TeleportAbility ability, Unit unit) : base(ability, unit)
+    {
+    }
+
     public override void UpdateAbility()
     {
-        if (!canTeleport) return;
-        currentTime += Time.deltaTime;
-
-        if (currentTime >= projectileDecayTime)
-        {
-            canTeleport = false;
-            currentTime = 0;
-            projInstance = null;
-        }
+        
     }
 
     public override void Perform(Quaternion aim)
     {
-        if (!canTeleport)
+        if (projInstance == null)
         {
             FireTeleportProjectile(aim);
         }
@@ -47,16 +42,14 @@ public class TeleportAbility : Ability
         
         unit.transform.position = projInstance.transform.position;
         GameObject.Destroy(projInstance.gameObject);
-        canTeleport = false;
+        projInstance = null;
     }
 
     private void FireTeleportProjectile(Quaternion aim)
     {
-        if (canTeleport) return;
-        projInstance = GameObject.Instantiate(unit.UnitAttack.AttackProjectilePrefab, unit.transform.position, aim);
+        projInstance = GameObject.Instantiate(unit.UnitAbility.AttackProjectilePrefab, unit.transform.position, aim);
         projInstance.CanDestroyOtherUnits = false;
         projInstance.SetOwner(unit);
-        projInstance.DecayTime = projectileDecayTime;
-        canTeleport = true;
+        projInstance.DecayTime = ProjectileDecayTime;
     }
 }

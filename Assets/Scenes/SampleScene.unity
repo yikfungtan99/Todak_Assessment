@@ -1028,7 +1028,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitMovement: {fileID: 0}
-  unitAttack: {fileID: 0}
+  unitAbility: {fileID: 0}
 --- !u!1 &669531790
 GameObject:
   m_ObjectHideFlags: 0
@@ -1117,14 +1117,14 @@ MonoBehaviour:
   m_GameObject: {fileID: 669531790}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 6cbb58ff6046eb14b8db419d3125561e, type: 3}
+  m_Script: {fileID: 11500000, guid: 832e1437d4557e54cb6aadac2e85ed5c, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
   stickImage: {fileID: 435502221}
   stickRoot: {fileID: 669531791}
   maxDistance: 50
-  tapDuration: 0.25
-  holdDuration: 0.3
+  tapDuration: 0.1
+  holdDuration: 0.2
 --- !u!1 &705507993
 GameObject:
   m_ObjectHideFlags: 0
@@ -1330,7 +1330,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitMovement: {fileID: 0}
-  unitAttack: {fileID: 0}
+  unitAbility: {fileID: 0}
 --- !u!1 &803233687
 GameObject:
   m_ObjectHideFlags: 0
@@ -1442,7 +1442,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitMovement: {fileID: 0}
-  unitAttack: {fileID: 0}
+  unitAbility: {fileID: 0}
 --- !u!1 &816563199
 GameObject:
   m_ObjectHideFlags: 0
@@ -2151,7 +2151,7 @@ GameObject:
   - component: {fileID: 1026561745}
   - component: {fileID: 1026561747}
   m_Layer: 5
-  m_Name: btnAttack (1)
+  m_Name: btnSkill 1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2232,11 +2232,8 @@ MonoBehaviour:
   stickImage: {fileID: 397967630}
   stickRoot: {fileID: 1026561743}
   maxDistance: 50
-  tapDuration: 0.1
-  holdDuration: 0.2
-  abilityIndex: 0
-  canAim: 1
-  usePointAim: 0
+  tapDuration: 0
+  holdDuration: 0
 --- !u!1 &1092771210
 GameObject:
   m_ObjectHideFlags: 0
@@ -2692,7 +2689,7 @@ GameObject:
   - component: {fileID: 1547996454}
   - component: {fileID: 1547996452}
   m_Layer: 5
-  m_Name: btnAttack (2)
+  m_Name: btnSkill 2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -2735,11 +2732,8 @@ MonoBehaviour:
   stickImage: {fileID: 1664490528}
   stickRoot: {fileID: 1547996451}
   maxDistance: 50
-  tapDuration: 0.1
-  holdDuration: 0.2
-  abilityIndex: 1
-  canAim: 1
-  usePointAim: 1
+  tapDuration: 0
+  holdDuration: 0
 --- !u!114 &1547996454
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2954,6 +2948,7 @@ GameObject:
   - component: {fileID: 1699307039}
   - component: {fileID: 1699307040}
   - component: {fileID: 1699307041}
+  - component: {fileID: 1699307042}
   m_Layer: 5
   m_Name: SkillsPanel
   m_TagString: Untagged
@@ -3005,6 +3000,23 @@ CanvasGroup:
   m_Interactable: 1
   m_BlocksRaycasts: 1
   m_IgnoreParentGroups: 0
+--- !u!114 &1699307042
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1699307038}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a113cce514e4a90429e07e16f2622165, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  attackJoystick: {fileID: 669531794}
+  abilityJoysticks:
+  - {fileID: 1026561747}
+  - {fileID: 1547996452}
+  - {fileID: 1975848799}
 --- !u!1 &1776363694
 GameObject:
   m_ObjectHideFlags: 0
@@ -3134,7 +3146,7 @@ GameObject:
   - component: {fileID: 1975848801}
   - component: {fileID: 1975848799}
   m_Layer: 5
-  m_Name: btnAttack (3)
+  m_Name: btnSkill 3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -3179,9 +3191,6 @@ MonoBehaviour:
   maxDistance: 50
   tapDuration: 0.1
   holdDuration: 0.2
-  abilityIndex: 2
-  canAim: 0
-  usePointAim: 0
 --- !u!114 &1975848801
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3315,7 +3324,7 @@ Mesh:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: pb_Mesh88092
+  m_Name: pb_Mesh24172
   serializedVersion: 10
   m_SubMeshes:
   - serializedVersion: 2
@@ -3473,6 +3482,54 @@ Mesh:
     offset: 0
     size: 0
     path: 
+--- !u!1 &2026845387
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2026845389}
+  - component: {fileID: 2026845388}
+  m_Layer: 0
+  m_Name: AimManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2026845388
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026845387}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0a0a5ab84a3f76e4a8d6333bf808ed81, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  straightRangeIndicator: {fileID: 2011365714}
+  pointRangeIndicator: {fileID: 949181184}
+  rangeRadius: {fileID: 1638465148}
+  showTime: 0
+--- !u!4 &2026845389
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2026845387}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 19.455847, y: -4.9981294, z: 9.666986}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 12
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2041115138
 GameObject:
   m_ObjectHideFlags: 0
@@ -3648,11 +3705,12 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   attackProjectilePrefab: {fileID: 2970139344286173860, guid: 09810e97483467149861c126cb284c69,
     type: 3}
-  straightRangeIndicator: {fileID: 2011365714}
-  pointRangeIndicator: {fileID: 949181184}
-  rangeRadius: {fileID: 1638465148}
-  showTime: 0.25
-  pointRangeAimSpeed: 3
+  attackAbilityObject: {fileID: 11400000, guid: ab624fc3f62e14947bd77001b8156de8,
+    type: 2}
+  abilitiesObject:
+  - {fileID: 11400000, guid: 7038ff7b9039e4d45b596b75873d6312, type: 2}
+  - {fileID: 11400000, guid: 6b4d27a5d2329ed41bec44de26026751, type: 2}
+  - {fileID: 11400000, guid: c8911392976096743b409e801cfeb49d, type: 2}
 --- !u!114 &2047236004
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3666,7 +3724,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   unitMovement: {fileID: 2047236002}
-  unitAttack: {fileID: 2047236003}
+  unitAbility: {fileID: 2047236003}
 --- !u!1 &2054850185
 GameObject:
   m_ObjectHideFlags: 0
