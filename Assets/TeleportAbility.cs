@@ -16,6 +16,7 @@ public class TeleportAbility : Ability
 
     public TeleportAbility(TeleportAbility ability, Unit unit) : base(ability, unit)
     {
+        TeleportAbilityPrefab = ability.TeleportAbilityPrefab;
     }
 
     public override void UpdateAbility()
@@ -23,23 +24,32 @@ public class TeleportAbility : Ability
         
     }
 
+    public override void Perform()
+    {
+        if (projInstance == null) return;
+        Teleport();
+    }
+
     public override void Perform(Quaternion aim)
     {
-        if (projInstance == null)
-        {
-            FireTeleportProjectile(aim);
-        }
-        else
+        if (projInstance != null)
         {
             Teleport();
         }
+        else
+        {
+            FireTeleportProjectile(aim);
+        }
+    }
 
+    public override void Hold(Quaternion dir)
+    {
+        if (projInstance != null) return;
+        base.Hold(dir);
     }
 
     private void Teleport()
     {
-        if (projInstance == null) return;
-        
         unit.transform.position = projInstance.transform.position;
         GameObject.Destroy(projInstance.gameObject);
         projInstance = null;
@@ -47,9 +57,7 @@ public class TeleportAbility : Ability
 
     private void FireTeleportProjectile(Quaternion aim)
     {
-        projInstance = GameObject.Instantiate(unit.UnitAbility.AttackProjectilePrefab, unit.transform.position, aim);
-        projInstance.CanDestroyOtherUnits = false;
+        projInstance = GameObject.Instantiate(TeleportAbilityPrefab, unit.transform.position, aim);
         projInstance.SetOwner(unit);
-        projInstance.DecayTime = ProjectileDecayTime;
     }
 }

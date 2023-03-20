@@ -9,6 +9,7 @@ public abstract class Ability
 
     protected Unit unit;
     protected Quaternion currentAim;
+    protected Vector3 currentAimPosition;
 
     protected Ability(Unit unit)
     {
@@ -29,30 +30,46 @@ public abstract class Ability
         Perform(unit.transform.rotation);
     }
 
-    public abstract void Perform(Quaternion rotation);
+    public virtual void Perform(Quaternion rotation)
+    {
+
+    }
+
+    public virtual void Perform(Vector3 position)
+    {
+
+    }
+
     public abstract void UpdateAbility();
     public virtual void Hold(Quaternion dir)
     {
+        if (AimType != AimType.STRAIGHT) return;
         currentAim = dir;
-        switch (AimType)
-        {
-            case AimType.STRAIGHT:
-                AimManager.Instance.StraightAim(dir);
-                break;
+        AimManager.Instance.StraightAim(dir);
+    }
 
-            case AimType.POSITIONAL:
-                AimManager.Instance.PointAim(dir);
-                break;
-
-            default:
-                break;
-        }
-        
+    public virtual void Hold(Vector3 scaledPosition)
+    {
+        if (AimType != AimType.POSITIONAL) return;
+        currentAimPosition = scaledPosition;
+        AimManager.Instance.PointAim(scaledPosition);
     }
 
     public virtual void EndHold()
     {
-        Perform(currentAim);
+        switch (AimType)
+        {
+            case AimType.STRAIGHT:
+                Perform(currentAim);
+                break;
+
+            case AimType.POSITIONAL:
+                Perform(currentAimPosition);
+                break;
+            default:
+                break;
+        }
+
         AimManager.Instance.EndAim();
     }
 }

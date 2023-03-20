@@ -182,4 +182,9 @@ public class Joystick : MonoBehaviour
     {
         isHolding = false;
     }
+
+    public Vector3 GetScaledPosition(Vector3 origin, float scaleMaxDistance)
+    {
+        return origin + stickImage.rectTransform.localPosition / maxDistance * scaleMaxDistance;
+    }
 }

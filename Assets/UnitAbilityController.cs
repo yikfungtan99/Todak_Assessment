@@ -4,9 +4,6 @@ using UnityEngine;
 
 public partial class UnitAbilityController : UnitBehaviour
 {
-    [Header("Dependencies")]
-    [SerializeField] private Projectile attackProjectilePrefab;
-
     [Header("Properties")]
     [SerializeField] private AbilitySO attackAbilityObject;
     [SerializeField] private AbilitySO[] abilitiesObject;
@@ -18,7 +15,6 @@ public partial class UnitAbilityController : UnitBehaviour
     public List<Ability> Abilities { get => abilities; }
 
     private Ability currentAbility = null;
-    public Projectile AttackProjectilePrefab { get => attackProjectilePrefab; }
 
     protected override void Awake()
     {

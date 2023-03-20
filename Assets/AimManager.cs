@@ -22,7 +22,8 @@ public class AimManager : SingletonBehaviour<AimManager>
     private bool isPointAim = false;
 
     private Quaternion straightAimDirection;
-    private Quaternion pointAimDirection;
+
+    private Vector3 pointAimPosition;
 
     // Update is called once per frame
     void Update()
@@ -47,8 +48,7 @@ public class AimManager : SingletonBehaviour<AimManager>
             if (isPointAim)
             {
                 pointRangeIndicator.alpha = alpha;
-                Vector3 forwardDirection = pointAimDirection * Vector3.forward;
-                pointRangeIndicator.transform.position += forwardDirection * Time.deltaTime * currentPointRangeAimSpeed;
+                pointRangeIndicator.transform.position = pointAimPosition;
             }
         }
         else
@@ -66,9 +66,11 @@ public class AimManager : SingletonBehaviour<AimManager>
         straightAimDirection = aim;
     }
 
-    public void PointAim(Quaternion aim)
+    public void PointAim(Vector3 scaledPosition)
     {
-       
+        isAiming = true;
+        isPointAim = true;
+        pointAimPosition = new Vector3(scaledPosition.x, pointRangeIndicator.transform.position.y, scaledPosition.y);
     }
 
     public void EndAim()

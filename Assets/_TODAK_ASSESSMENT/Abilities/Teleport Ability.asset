@@ -12,3 +12,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c52457e3e839e6245ba3df4013e699c9, type: 3}
   m_Name: Teleport Ability
   m_EditorClassIdentifier: 
+  teleportAbility:
+    CanAim: 1
+    Range: 3
+    AimType: 0
+    TeleportAbilityPrefab: {fileID: 2970139344286173860, guid: 6e288f88c6c451c44a6cd99554bc6af0,
+      type: 3}
+    ProjectileDecayTime: 3
+    CurrentTime: 3

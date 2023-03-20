@@ -17,8 +17,25 @@ public class AbilityJoyStick : Joystick
 
     protected override void Hold()
     {
+        if (!ability.CanAim) return;
         base.Hold();
-        ability.Hold(Quaternion.Euler(currentDirection));
+
+        switch (ability.AimType)
+        {
+            case AimType.STRAIGHT:
+                ability.Hold(Quaternion.Euler(currentDirection));
+                break;
+
+            case AimType.POSITIONAL:
+
+                Vector3 playerPos = PlayerManager.Instance.CurrentUnit.transform.position;
+                Vector3 actualPos = new Vector3(playerPos.x, playerPos.z);
+                ability.Hold(GetScaledPosition(actualPos, ability.Range));
+                break;
+
+            default:
+                break;
+        }
     }
 
     protected override void EndHold()

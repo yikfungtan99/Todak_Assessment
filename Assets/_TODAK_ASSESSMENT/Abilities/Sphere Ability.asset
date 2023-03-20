@@ -12,3 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 06175a759121bdf4da9db287c7f7d778, type: 3}
   m_Name: Sphere Ability
   m_EditorClassIdentifier: 
+  sphereAbility:
+    CanAim: 0
+    Range: 0
+    AimType: 0
+    skillDuration: 5
+    sphereAbilityPrefab: {fileID: 4176718601716103897, guid: 11b46a1773ac28f45bddc0ab7a182256,
+      type: 3}

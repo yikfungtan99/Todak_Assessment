@@ -12,3 +12,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ba76c33ee158126419d15409f529cab5, type: 3}
   m_Name: Positional Ability
   m_EditorClassIdentifier: 
+  positionalAbility:
+    CanAim: 1
+    Range: 5
+    AimType: 1
+    positionalAbilityPrefab: {fileID: 349637184421147055, guid: f92137cb8fa840344a6c5378b3b76917,
+      type: 3}
