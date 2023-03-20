@@ -45,14 +45,14 @@ public abstract class Ability
     {
         if (AimType != AimType.STRAIGHT) return;
         currentAim = dir;
-        AimManager.Instance.StraightAim(dir);
+        AimManager.Instance.StraightAim(dir, Range);
     }
 
     public virtual void Hold(Vector3 scaledPosition)
     {
         if (AimType != AimType.POSITIONAL) return;
         currentAimPosition = scaledPosition;
-        AimManager.Instance.PointAim(scaledPosition);
+        AimManager.Instance.PointAim(scaledPosition, Range);
     }
 
     public virtual void EndHold()

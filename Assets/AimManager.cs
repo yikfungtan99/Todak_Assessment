@@ -10,6 +10,8 @@ public class AimManager : SingletonBehaviour<AimManager>
     [SerializeField] private CanvasGroup rangeRadius;
 
     [Header("Properties")]
+    [SerializeField] private float straightRangeScaler = 0.65f;
+    [SerializeField] private float radiusScaler = 0.65f;
     [SerializeField] private float showTime;
 
     private float curShowTime;
@@ -25,6 +27,8 @@ public class AimManager : SingletonBehaviour<AimManager>
 
     private Vector3 pointAimPosition;
 
+    private float currrentRange;
+
     // Update is called once per frame
     void Update()
     {
@@ -38,11 +42,14 @@ public class AimManager : SingletonBehaviour<AimManager>
             float alpha = Mathf.Lerp(0f, 1f, t);
             rangeRadius.alpha = alpha;
 
+            rangeRadius.transform.localScale = Vector3.one * currrentRange * radiusScaler;
+
             if (isStraightAim)
             {
                 straightRangeIndicator.alpha = alpha;
                 Quaternion newRotation = Quaternion.Euler(90f, straightAimDirection.eulerAngles.y, 0);
                 straightRangeIndicator.transform.rotation = newRotation;
+                straightRangeIndicator.transform.localScale = Vector3.one * currrentRange * straightRangeScaler;
             }
 
             if (isPointAim)
@@ -59,18 +66,20 @@ public class AimManager : SingletonBehaviour<AimManager>
         }
     }
 
-    public void StraightAim(Quaternion aim)
+    public void StraightAim(Quaternion aim, float range)
     {
         isAiming = true;
         isStraightAim = true;
         straightAimDirection = aim;
+        currrentRange = range;
     }
 
-    public void PointAim(Vector3 scaledPosition)
+    public void PointAim(Vector3 scaledPosition, float range)
     {
         isAiming = true;
         isPointAim = true;
         pointAimPosition = new Vector3(scaledPosition.x, pointRangeIndicator.transform.position.y, scaledPosition.y);
+        currrentRange = range;
     }
 
     public void EndAim()

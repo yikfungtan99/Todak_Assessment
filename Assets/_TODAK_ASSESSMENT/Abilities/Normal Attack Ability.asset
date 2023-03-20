@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   normalAttackAbility:
     CanAim: 1
-    Range: 3
+    Range: 5
     AimType: 0
     normalAttackPrefab: {fileID: 2970139344286173861, guid: 09810e97483467149861c126cb284c69,
       type: 3}

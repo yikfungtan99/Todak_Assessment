@@ -14,7 +14,7 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   teleportAbility:
     CanAim: 1
-    Range: 3
+    Range: 8
     AimType: 0
     TeleportAbilityPrefab: {fileID: 2970139344286173860, guid: 6e288f88c6c451c44a6cd99554bc6af0,
       type: 3}
