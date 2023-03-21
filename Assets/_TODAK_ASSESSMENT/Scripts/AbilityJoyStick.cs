@@ -1,8 +1,11 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class AbilityJoyStick : Joystick
 {
+    [SerializeField] private Image abilityBackground;
+
     private Ability ability;
     private RectTransform cancelZone;
 
@@ -24,10 +27,16 @@ public class AbilityJoyStick : Joystick
 
     protected override void Hold()
     {
-        if (!ability.CanAim) return;
+        if (!ability.CanAim)
+        {
+            ability.Perform();
+            return;
+        }
+
         base.Hold();
 
-        Debug.Log(cancelZone.sizeDelta.x);
+        if (abilityBackground != null) abilityBackground.gameObject.SetActive(true);
+        stickImage.gameObject.SetActive(true);
 
         switch (ability.AimType)
         {
@@ -51,8 +60,10 @@ public class AbilityJoyStick : Joystick
     {
         base.EndHold();
 
-        Vector3 localTouchPos = cancelZone.InverseTransformPoint(touchPosition);
+        if (abilityBackground != null) abilityBackground.gameObject.SetActive(false);
+        stickImage.gameObject.SetActive(false);
 
+        Vector3 localTouchPos = cancelZone.InverseTransformPoint(touchPosition);
 
         if (localTouchPos.magnitude < cancelZone.sizeDelta.x)
         {

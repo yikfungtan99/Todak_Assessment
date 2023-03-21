@@ -7,11 +7,10 @@ public class Projectile : MonoBehaviour
     [SerializeField] private float projectileSpeed;
     [SerializeField] private float effectRadius;
     [SerializeField] private LayerMask affectedLayerMask;
+    [SerializeField] private float decayTime = 3f;
 
     private Unit owner = null;
     public bool CanDestroyOtherUnits = true;
-
-    private float decayTime = 10f;
 
     public float DecayTime { get => decayTime; set => decayTime = value; }
 

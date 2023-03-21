@@ -110,9 +110,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1703f6f5bce6e604a8fbfb7d2eebf16a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  projectileSpeed: 10
+  projectileSpeed: 5
   effectRadius: 1.01
   affectedLayerMask:
     serializedVersion: 2
     m_Bits: 2147483647
+  decayTime: 5
   CanDestroyOtherUnits: 0

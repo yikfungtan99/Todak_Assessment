@@ -21,7 +21,7 @@ public class TeleportAbility : Ability
 
     public override void UpdateAbility()
     {
-        
+        CanAim = projInstance == null;
     }
 
     public override void Perform()
