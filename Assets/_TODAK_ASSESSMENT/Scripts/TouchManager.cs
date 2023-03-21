@@ -4,5 +4,5 @@ using UnityEngine;
 
 public class TouchManager : SingletonBehaviour<TouchManager>
 {
-    public List<int> FingerIDs = new List<int>();
+    [HideInInspector] public List<int> FingerIDs = new List<int>();
 }
