@@ -1,12 +1,19 @@
-﻿using UnityEngine;
+﻿using System;
+using UnityEngine;
 
 public class AbilityJoyStick : Joystick
 {
     private Ability ability;
+    private RectTransform cancelZone;
 
     public void SetAbility(Ability ability)
     {
         this.ability = ability;
+    }
+
+    public void SetCancelZone(RectTransform cancelZone)
+    {
+        this.cancelZone = cancelZone;
     }
 
     protected override void Tap()
@@ -19,6 +26,8 @@ public class AbilityJoyStick : Joystick
     {
         if (!ability.CanAim) return;
         base.Hold();
+
+        Debug.Log(cancelZone.sizeDelta.x);
 
         switch (ability.AimType)
         {
@@ -41,6 +50,15 @@ public class AbilityJoyStick : Joystick
     protected override void EndHold()
     {
         base.EndHold();
+
+        Vector3 localTouchPos = cancelZone.InverseTransformPoint(touchPosition);
+
+
+        if (localTouchPos.magnitude < cancelZone.sizeDelta.x)
+        {
+            ability.Cancel();
+        }
+
         ability.EndHold();
     }
 }

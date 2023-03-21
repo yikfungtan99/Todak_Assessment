@@ -122,6 +122,8 @@ public class Joystick : MonoBehaviour
             Touch touch = Input.GetTouch(cachedTouchIndex);
 
             Vector3 touchPos = touch.position;
+            touchPosition = touchPos;
+
             Vector3 localTouchPos = stickRoot.transform.InverseTransformPoint(touchPos);
 
             if (touch.phase == TouchPhase.Canceled || touch.phase == TouchPhase.Ended)
@@ -152,8 +154,6 @@ public class Joystick : MonoBehaviour
             currentTapTime += Time.deltaTime;
 
             isTouching = true;
-
-            touchPosition = pos;
         }
         else
         {

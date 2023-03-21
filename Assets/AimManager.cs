@@ -8,6 +8,7 @@ public class AimManager : SingletonBehaviour<AimManager>
     [SerializeField] private CanvasGroup straightRangeIndicator;
     [SerializeField] private CanvasGroup pointRangeIndicator;
     [SerializeField] private CanvasGroup rangeRadius;
+    [SerializeField] private CanvasGroup cancelZone;
 
     [Header("Properties")]
     [SerializeField] private float straightRangeScaler = 0.65f;
@@ -57,12 +58,16 @@ public class AimManager : SingletonBehaviour<AimManager>
                 pointRangeIndicator.alpha = alpha;
                 pointRangeIndicator.transform.position = pointAimPosition;
             }
+
+            float cancelAlpha = Mathf.Lerp(0f, .5f, t);
+            cancelZone.alpha = cancelAlpha;
         }
         else
         {
             straightRangeIndicator.alpha = 0;
             pointRangeIndicator.alpha = 0;
             rangeRadius.alpha = 0;
+            cancelZone.alpha = 0;
         }
     }
 

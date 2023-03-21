@@ -10,6 +10,7 @@ public abstract class Ability
     protected Unit unit;
     protected Quaternion currentAim;
     protected Vector3 currentAimPosition;
+    protected bool isCanceled = false;
 
     protected Ability(Unit unit)
     {
@@ -40,7 +41,13 @@ public abstract class Ability
 
     }
 
+    public virtual void Cancel()
+    {
+        isCanceled = true;
+    }
+
     public abstract void UpdateAbility();
+
     public virtual void Hold(Quaternion dir)
     {
         if (AimType != AimType.STRAIGHT) return;
@@ -57,6 +64,14 @@ public abstract class Ability
 
     public virtual void EndHold()
     {
+        AimManager.Instance.EndAim();
+
+        if (isCanceled)
+        {
+            isCanceled = false;
+            return;
+        }
+
         switch (AimType)
         {
             case AimType.STRAIGHT:
@@ -69,7 +84,5 @@ public abstract class Ability
             default:
                 break;
         }
-
-        AimManager.Instance.EndAim();
     }
 }
